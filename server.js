@@ -8,19 +8,28 @@ dotenv.config();
 
 const app = express();
 
-// connect database
-connectDB();
-
 app.use(cors());
 app.use(express.json());
-app.use("/api/recipe", recipeRoutes);
-
-app.get("/", (req, res) => {
-  res.send("API Running...");
-});
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();   // wait for DB
+
+    app.use("/api/recipe", recipeRoutes);
+
+    app.get("/", (req, res) => {
+      res.send("API Running...");
+    });
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+
+  } catch (error) {
+    console.log("Server Start Failed ❌", error);
+  }
+};
+
+startServer();
